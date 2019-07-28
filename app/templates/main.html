@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    
+    <title>Main - Quran Verse Extractor</title>
+    <style>
+      html, body {
+        height: 100%;
+        background-color: #333333
+      }
+
+      body {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        padding-top: 40px;
+        padding-bottom: 40px;
+      }
+
+      .form-signin {
+        width: 100%;
+        max-width: 750px;
+        padding: 15px;
+        margin: auto;
+      }
+
+      .form-label-group {
+        position: relative;
+        margin-bottom: 1rem;
+      }
+    
+      h1, a, p, label {
+        color: azure
+      }
+    </style>
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+  <body>
+
+      <form action="/results" method="POST" class="form-signin">
+
+        <div class="text-center mb-4">
+          <h1 class="h3 mb-3 font-weight-normal">Input the text</h1>
+          <p class="lead">
+            The input text must be in Indonesian. Suggested to use standard indonesian grammar, 
+            don't be too short (approx. more than 100 word), and minimalize the use of unnecessary symbols.
+          </p>
+        </div>
+        
+        <div class="form-label-group">
+          <textarea class="form-control" rows="10" id="input-text" name="input-text" placeholder="Input text here..." required autofocus></textarea>
+
+          <p class="lead mt-3">Method :</p>
+          <div class="form-check mt-3">
+            <label class="form-check-label">
+              <input type="radio" class="form-check-input" name="optradio" id="optradio1" value="multilabel">Multilabel + IR
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input type="radio" class="form-check-input" name="optradio" id="optradio2" value="doc-ir">Document IR
+            </label>
+          </div>
+
+          <label for="amount-ayah" class="lead mt-3">Amount of Ayah :</label>
+          <select class="form-control" id="amount-ayah" name="amount-ayah">
+            {% for i in range(1, 6237) %}
+              {% if (i == 0) %}
+                <option value="{{ i }}" selected>{{ i }}</option>
+              {% else %}
+                <option value="{{ i }}">{{ i }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="text-center mt-3 mb-4">
+            <button class="btn btn-lg btn-secondary" type="submit">Submit</button>
+        </div>
+
+        <p class="mt-5 mb-3 text-muted text-center">
+          Final project of IF4092 Tugas Akhir II, created by
+          <a href="https://hzntrm.wordpress.com">Faiz G. Haznitrama</a>
+        </p>
+
+      </form>
+
+  </body>
+</html>

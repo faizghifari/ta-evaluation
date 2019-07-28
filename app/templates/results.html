@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <link href="https://fonts.googleapis.com/css?family=Amiri&display=swap" rel="stylesheet">
+
+    <title>Results - Quran Verse Extractor</title>
+    <style>
+      html, body {
+        height: 100%;
+        background-color: #333333
+      }
+
+      h1, h2, h3, h4 {
+        color: white
+      }
+
+      p, a, label, input {
+        color: azure
+      }
+
+      .arabic {
+        font-family: 'Amiri', serif
+      }
+    </style>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  </head>
+
+  <body class="text-center">
+
+    <form action="/evaluation" method="POST">
+    
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+      <header class="masthead m-5 pb-5 border-bottom">
+          {% if (method == 'multilabel') %}
+          <div class="text-center">
+              <h1 class="cover-heading">Extracted Topics</h1>
+                {% for i in range(0, answers_len) %}
+                <div class="form-check-inline lead">
+                  <label class="form-check-label lead">
+                    <input type="checkbox" class="form-check-input lead" name="{{ raw_answers[i] }}" id="{{ raw_answers[i] }}" value="{{ raw_answers[i] }}">{{ raw_answers[i] }}
+                  </label>
+                </div>
+                <!-- <h4 class="lead mt-3">"{{ answers_txt }}"</h4> -->
+                {% endfor %}
+          </div>
+          {% endif %}  
+      </header>
+
+      <main role="main" class="inner cover">
+
+        <!-- <div class="row justify-content-center">
+            <div class="col-sm-10 text-center"> 
+                <h2 class="cover-heading text-center text-capitalize mb-5 px-5"></h2>
+            </div>
+        </div> -->
+
+        <div class="row justify-content-center mb-5">
+          <div class="col-sm-10 text-center">
+            <h1 class="cover-heading text-center">Retrieval Results</h1>
+          </div>
+        </div>
+
+        {% for i in range(0, amount_ayah) %}
+        <div class="row justify-content-center pb-5">
+            <div class="col-sm-10 text-center">
+                <h4 class="cover-heading text-center arabic">{{ verse_results[i][3] }}</h4>
+                <p class="lead mx-5 px-5 font-italic">
+                    {{ verse_results[i][5] }}
+                    <br>
+                    <a href="https://quran.com/{{ verse_results[i][0] }}/{{ verse_results[i][2] }}?translations=33">
+                      QS.{{ verse_results[i][1] }}[{{ verse_results[i][0] }}]:{{ verse_results[i][2] }}
+                    </a>
+                    <br>
+                    {{ similarity_score[i] }}
+                    <div class="form-check-inline lead">
+                      <label class="form-check-label lead">
+                        <input type="checkbox" class="form-check-input lead" name="{{ i }}" id="{{ i }}" value="{{ i }}">Relevance
+                      </label>
+                    </div>
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+                    
+        <!-- <div class="row border-bottom mb-5"></div> -->
+
+        {% if (amount_ayah == 0) %}
+        <div class="row justify-content-center mt-auto mx-auto">
+            <div class="col-sm-10">
+                <h3 class="cover-heading text-center">Oops! Seems like no verse found!</h3>
+                <p class="lead mb-5">
+                    Please input other text in the main page.
+                </p>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <p class="lead">
+                <a href="/main" class="btn btn-lg btn-secondary">Back to Main</a>
+            </p>
+        </div>
+        {% endif %}
+        
+      </main>
+      
+      <footer class="mastfoot mt-auto">
+            {% if (amount_ayah != 0) %}
+            <div class="row justify-content-center">
+                <button class="btn btn-lg btn-secondary" type="submit">Submit Evaluation</button>
+            </div>
+            {% endif %}
+
+            <div class="row justify-content-center">
+                <p class="mt-5 mb-3 text-muted text-center">
+                    Final project of IF4092 Tugas Akhir II, created by
+                    <a href="https://hzntrm.wordpress.com">Faiz G. Haznitrama</a>
+                </p>
+            </div>
+      </footer>
+    </div>
+    
+    </form>
+
+  </body>
+</html>

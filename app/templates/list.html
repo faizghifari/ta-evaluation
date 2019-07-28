@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+   <body>
+      <table border = 1>
+         <thead>
+            <td>Evaluator</td>
+            <td>Text</td>
+            <td>Labels</td>
+            <td>Verse Relevance</td>
+            <td>Verse Irrelevance</td>
+         </thead>
+         
+         {% for row in rows %}
+            <tr>
+               <td>{{row["evaluator"]}}</td>
+               <td>{{row["raw_text"]}}</td>
+               <td>{{row["labels"]}}</td>
+               <td> {{ row["verse_relevance"]}}</td>
+               <td>{{row['verse_irrelevance']}}</td>	
+            </tr>
+         {% endfor %}
+      </table>
+      
+      <a href = "/main">Go back to main page</a>
+   </body>
+</html>
