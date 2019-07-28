@@ -181,6 +181,39 @@ def list():
    rows = cur.fetchall()
    return render_template('list.html', rows=rows)
 
+@app.route('/dump')
+def dump():
+    con = sql.connect(DATABASE_URI)
+    con.row_factory = sql.Row
+   
+    cur = con.cursor()
+    cur.execute('SELECT * FROM evaluation')
+    
+    evaluator = []
+    raw_text = []
+    labels = []
+    verse_relevance = []
+    verse_irrelevance = []
+
+    rows = cur.fetchall()
+    for row in rows:
+        evaluator.append(row["evaluator"])
+        raw_text.append(row["raw_text"])
+        labels.append(row["labels"])
+        verse_relevance.append(row["verse_relevance"])
+        verse_irrelevance.append(row["verse_irrelevance"])
+    
+    df = pd.DataFrame({
+        'evaluator': evaluator,
+        'raw_text': raw_text,
+        'labels': labels,
+        'verse_relevance': verse_relevance,
+        'verse_irrelevance': verse_irrelevance
+    })
+    df.to_csv('res/eval-results.csv', encoding='utf-8', index=False)
+
+    return redirect(url_for('index'))
+
 @app.route('/error')
 def error():
     return render_template('error.html')

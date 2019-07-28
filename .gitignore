@@ -2,4 +2,3 @@
 .vscode
 *glove*
 __pycache__
-app/db
