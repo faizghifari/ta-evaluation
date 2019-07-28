@@ -7,9 +7,9 @@ import pandas as pd
 from flask import Flask, render_template, request, redirect, url_for, session
 from sklearn.metrics.pairwise import cosine_similarity
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
-from app.lib.word_similarity import WordSimilarityClassifier
-from app.lib.preprocess import IndoTextCleaner, StopWordsEliminator
-from app.lib.dict import load_dict
+from lib.word_similarity import WordSimilarityClassifier
+from lib.preprocess import IndoTextCleaner, StopWordsEliminator
+from lib.dict import load_dict
 
 app = Flask(__name__)
 app.secret_key = "super secret key"
@@ -18,12 +18,14 @@ DATABASE_URI = 'db/evaluation.db'
 
 target_dict, surah_dict = load_dict()
 
+import os
+print(os.getcwd())
+
 vectorizer = pickle.load(open('pkl/vectorizer.pkl', 'rb'))
 tfidf_vectorizer = pickle.load(open('pkl/tfidf_vectorizer.pkl', 'rb'))
 tfidf_verse_matrix = pickle.load(open('pkl/tfidf_verse_matrix.pkl', 'rb'))
 
 tree = pickle.load(open('pkl/tree.pkl', 'rb'))
-wordsim = pickle.load(open('pkl/wordsim.pkl', 'rb'))
 
 id_quran = pd.read_csv('../quran/Indonesian_clean.csv')
 ar_quran = pd.read_csv('../quran/Arabic.csv')
@@ -219,5 +221,5 @@ def error():
     return render_template('error.html')
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(host='0.0.0.0',port=5000, debug=True)
 
