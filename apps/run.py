@@ -211,6 +211,7 @@ def dump():
     cur.execute('SELECT * FROM evaluation')
     
     evaluator = []
+    method = []
     raw_text = []
     labels = []
     verse_relevance = []
@@ -219,6 +220,7 @@ def dump():
     rows = cur.fetchall()
     for row in rows:
         evaluator.append(row["evaluator"])
+        method.append(row["method"])
         raw_text.append(row["raw_text"])
         labels.append(row["labels"])
         verse_relevance.append(row["verse_relevance"])
@@ -226,6 +228,7 @@ def dump():
     
     df = pd.DataFrame({
         'evaluator': evaluator,
+        'method': method,
         'raw_text': raw_text,
         'labels': labels,
         'verse_relevance': verse_relevance,
