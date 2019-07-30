@@ -37,7 +37,7 @@
     
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
       <header class="masthead m-5 pb-5 border-bottom">
-          {% if (method == 'multilabel') %}
+          {% if (method != 'doc-ir') %}
           <div class="text-center">
               <h1 class="cover-heading">Extracted Topics</h1>
                 {% for i in range(0, answers_len) %}

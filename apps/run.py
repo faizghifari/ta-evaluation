@@ -16,16 +16,18 @@ app.secret_key = "super secret key"
 
 DATABASE_URI = 'db/evaluation.db'
 
-target_dict, surah_dict = load_dict()
+target_dict, old_dict, surah_dict = load_dict()
 
 import os
 print(os.getcwd())
 
 vectorizer = pickle.load(open('pkl/vectorizer.pkl', 'rb'))
+old_vectorizer = pickle.load(open('pkl/old_vectorizer.pkl', 'rb'))
 tfidf_vectorizer = pickle.load(open('pkl/tfidf_vectorizer.pkl', 'rb'))
 tfidf_verse_matrix = pickle.load(open('pkl/tfidf_verse_matrix.pkl', 'rb'))
 
 tree = pickle.load(open('pkl/tree.pkl', 'rb'))
+old_tree = pickle.load(open('pkl/old_tree.pkl', 'rb'))
 
 id_quran = pd.read_csv('../quran/Indonesian_clean.csv')
 ar_quran = pd.read_csv('../quran/Arabic.csv')
@@ -36,7 +38,7 @@ sw_elim = StopWordsEliminator()
 stemmer = StemmerFactory().create_stemmer()
 
 conn = sql.connect(DATABASE_URI)
-conn.execute('CREATE TABLE IF NOT EXISTS evaluation (evaluator TEXT, raw_text TEXT, labels TEXT, verse_relevance INTEGER, verse_irrelevance INTEGER)')
+conn.execute('CREATE TABLE IF NOT EXISTS evaluation (evaluator TEXT, method TEXT, raw_text TEXT, labels TEXT, verse_relevance INTEGER, verse_irrelevance INTEGER)')
 conn.close()
 
 @app.route('/')
@@ -69,7 +71,7 @@ def results():
         answers = []
         answers_txt = ''
 
-        if (method == 'multilabel'):
+        if (method == 'multilabel-new'):
             results = np.array(tree.predict(vectorizer.transform(input_text)))
 
             for result in results:
@@ -77,6 +79,21 @@ def results():
                 for label in result:
                     if label == 1:
                         for name, key in target_dict.items():
+                            if key == idx:
+                                answers.append(name)
+                    idx = idx + 1
+
+            answers_txt = ' '.join(answers)
+            raw_answers = answers
+            answers = pd.Series([answers_txt])
+        elif (method == 'multilabel-old'):
+            results = np.array(old_tree.predict(old_vectorizer.transform(input_text)))
+
+            for result in results:
+                idx = 0
+                for label in result:
+                    if label == 1:
+                        for name, key in old_dict.items():
                             if key == idx:
                                 answers.append(name)
                     idx = idx + 1
@@ -102,6 +119,7 @@ def results():
         similarity_score = []
         verse_results = []
 
+        session['method'] = method
         session['input_text'] = input_text.values[0]
         session['raw_answers'] = raw_answers
         session['amount_ayah'] = amount_ayah
@@ -139,6 +157,7 @@ def evaluation():
             input_text = session['input_text']
             raw_answers = session['raw_answers']
             amount_ayah = session['amount_ayah']
+            method = session['method']
             
             labels = []
             verse_relevance = 0
@@ -162,7 +181,7 @@ def evaluation():
 
             with sql.connect(DATABASE_URI) as con:
                 cur = con.cursor()
-                cur.execute('INSERT INTO evaluation (evaluator,raw_text,labels,verse_relevance,verse_irrelevance) VALUES (?,?,?,?,?)',(username,input_text,labels_txt,verse_relevance,verse_irrelevance))
+                cur.execute('INSERT INTO evaluation (evaluator,method,raw_text,labels,verse_relevance,verse_irrelevance) VALUES (?,?,?,?,?,?)',(username,method,input_text,labels_txt,verse_relevance,verse_irrelevance))
                 con.commit()
                 msg = 'Record successfully added.'
         except:
